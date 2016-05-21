@@ -1,0 +1,48 @@
+#!/bin/sh
+# exclude directory tests
+
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+
+TZ=UTC0
+export TZ
+
+fail=0
+
+# Generate directory structure
+mkdir a
+mkdir b
+echo ac > a/c
+echo bc > b/c
+
+epoch='1970-01-01 00:00:00'
+touch --date="$epoch" a b a/c b/c
+
+gen_exp_default()
+{
+    printf '%s' \
+"diff -r '--exclude=b/*' a/c b/c
+1c1
+< ac
+---
+> bc
+"
+}
+
+gen_exp_excluded()
+{
+    printf '%s' \
+"Only in a: c
+"
+}
+
+diff -r --exclude="b/*" a b > out
+test $? = 1 || fail=1
+gen_exp_default > exp || framework_failure_
+compare exp out || fail=1
+
+diff -r --exclude-directory --exclude="b/*" a b > out
+test $? = 1 || fail=1
+gen_exp_excluded > exp || framework_failure_
+compare exp out || fail=1
+
+Exit $fail
