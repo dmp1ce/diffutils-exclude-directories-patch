@@ -1825,6 +1825,11 @@ patterns in a file, one pattern per line, and use the
 @option{--exclude-from=@var{file}} (@option{-X @var{file}}) option.
 Trailing white space and empty lines are ignored in the pattern file.
 
+To ignore whole directories with exclude pattern instead of only
+basenames use the @option{--exclude-directory} option in addition to
+@option{--exclude=@var{pattern}} or
+@option{--exclude-from=@var{file}} options.
+
 If you have been comparing two directories and stopped partway through,
 later you might want to continue where you left off.  You can do this by
 using the @option{--starting-file=@var{file}} (@option{-S @var{file}})
