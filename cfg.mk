@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2013, 2015-2016 Free Software Foundation, Inc.
+# Copyright (C) 2003-2013, 2015-2019 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,22 +14,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Use the direct link.  This is guaranteed to work immediately, while
+# it can take a while for the faster mirror links to become usable.
+url_dir_list = https://ftp.gnu.org/gnu/$(PACKAGE)
+
 # Used in maint.mk's web-manual rule
 manual_title = Comparing and Merging Files
 
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip =		\
   sc_error_message_period	\
-  sc_error_message_uppercase	\
-  sc_texinfo_acronym
+  sc_error_message_uppercase
 
 # Tools used to bootstrap this package, used for "announcement".
 bootstrap-tools = autoconf,automake,gnulib
 
+# Override the default Cc: used in generating an announcement.
+announcement_Cc_ = $(translation_project_), $(PACKAGE)-devel@gnu.org
+
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 8632093db0c946f65f639f06ac7de39a
+old_NEWS_hash = 883954bcb25c48755004736540de39e7
 
 # Tell maint.mk's syntax-check rules that diff gets config.h directly or
 # via diff.h or system.h.

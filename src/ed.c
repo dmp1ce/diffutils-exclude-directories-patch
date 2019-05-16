@@ -1,7 +1,7 @@
 /* Output routines for ed-script format.
 
    Copyright (C) 1988-1989, 1991-1993, 1995, 1998, 2001, 2004, 2006, 2009-2013,
-   2015-2016 Free Software Foundation, Inc.
+   2015-2019 Free Software Foundation, Inc.
 
    This file is part of GNU DIFF.
 
@@ -63,26 +63,26 @@ print_ed_hunk (struct change *hunk)
       bool insert_mode = true;
 
       for (i = f1; i <= l1; i++)
-	{
-	  if (!insert_mode)
-	    {
-	      fputs ("a\n", outfile);
-	      insert_mode = true;
-	    }
-	  if (files[1].linbuf[i][0] == '.' && files[1].linbuf[i][1] == '\n')
-	    {
-	      /* The file's line is just a dot, and it would exit
-		 insert mode.  Precede the dot with another dot, exit
-		 insert mode and remove the extra dot.  */
-	      fputs ("..\n.\ns/.//\n", outfile);
-	      insert_mode = false;
-	    }
-	  else
-	    print_1_line ("", &files[1].linbuf[i]);
-	}
+        {
+          if (!insert_mode)
+            {
+              fputs ("a\n", outfile);
+              insert_mode = true;
+            }
+          if (files[1].linbuf[i][0] == '.' && files[1].linbuf[i][1] == '\n')
+            {
+              /* The file's line is just a dot, and it would exit
+                 insert mode.  Precede the dot with another dot, exit
+                 insert mode and remove the extra dot.  */
+              fputs ("..\n.\ns/.//\n", outfile);
+              insert_mode = false;
+            }
+          else
+            print_1_line ("", &files[1].linbuf[i]);
+        }
 
       if (insert_mode)
-	fputs (".\n", outfile);
+        fputs (".\n", outfile);
     }
 }
 
@@ -144,7 +144,7 @@ static void
 print_rcs_hunk (struct change *hunk)
 {
   lin i, f0, l0, f1, l1;
-  long int tf0, tl0, tf1, tl1;
+  printint tf0, tl0, tf1, tl1;
 
   /* Determine range of line numbers involved in each file.  */
   enum changes changes = analyze_hunk (hunk, &f0, &l0, &f1, &l1);
@@ -158,18 +158,20 @@ print_rcs_hunk (struct change *hunk)
   if (changes & OLD)
     {
       /* For deletion, print just the starting line number from file 0
-	 and the number of lines deleted.  */
-      fprintf (outfile, "d%ld %ld\n", tf0, tf0 <= tl0 ? tl0 - tf0 + 1 : 1);
+         and the number of lines deleted.  */
+      fprintf (outfile, "d%"pI"d %"pI"d\n", tf0,
+               tf0 <= tl0 ? tl0 - tf0 + 1 : 1);
     }
 
   if (changes & NEW)
     {
       /* Take last-line-number from file 0 and # lines from file 1.  */
       translate_range (&files[1], f1, l1, &tf1, &tl1);
-      fprintf (outfile, "a%ld %ld\n", tl0, tf1 <= tl1 ? tl1 - tf1 + 1 : 1);
+      fprintf (outfile, "a%"pI"d %"pI"d\n", tl0,
+               tf1 <= tl1 ? tl1 - tf1 + 1 : 1);
 
       /* Print the inserted lines.  */
       for (i = f1; i <= l1; i++)
-	print_1_line ("", &files[1].linbuf[i]);
+        print_1_line ("", &files[1].linbuf[i]);
     }
 }

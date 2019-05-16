@@ -1,6 +1,6 @@
 # Main Automakefile for GNU diffutils.
 
-# Copyright (C) 2001-2002, 2004, 2006, 2009-2013, 2015-2016 Free Software
+# Copyright (C) 2001-2002, 2004, 2006, 2009-2013, 2015-2019 Free Software
 # Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
@@ -42,3 +42,17 @@ gen-ChangeLog:
 ALL_RECURSIVE_TARGETS += distcheck-hook
 distcheck-hook:
 	$(MAKE) my-distcheck
+
+# Some of our git hook scripts are supposed to be identical to git's samples.
+# See if they are still in sync.
+.PHONY: check-git-hook-script-sync
+check-git-hook-script-sync:
+	@fail=0;							\
+	t=$$(mktemp -d)							\
+	  && cd $$t && git init -q && cd .git/hooks			\
+	  && for i in pre-commit pre-applypatch applypatch-msg; do	\
+	       diff -u $(abs_top_srcdir)/scripts/git-hooks/$$i $$i.sample	\
+		 || fail=1;						\
+	     done;							\
+	rm -rf $$t;							\
+	test $$fail = 0
